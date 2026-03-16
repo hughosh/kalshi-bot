@@ -1,0 +1,11 @@
+{
+  "_comment": "Hand-maintained player name overrides. Maps display name -> ATP numeric ID string.",
+  "Carlos Alcaraz": "100644",
+  "Jannik Sinner": "106421",
+  "Novak Djokovic": "104925",
+  "Rafael Nadal": "104745",
+  "Roger Federer": "103819",
+  "Andy Murray": "105223",
+  "Daniil Medvedev": "106401",
+  "Alexander Zverev": "100644"
+}

@@ -1,0 +1,14 @@
+data/raw/
+data/processed/
+data/artifacts/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+dist/
+build/
+*.ubj
+*.pkl
+*.parquet
+.env
+notebooks/.ipynb_checkpoints/
