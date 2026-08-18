@@ -6,6 +6,8 @@ Required env vars:
   KALSHI_PRIVATE_KEY_PATH — Path to RSA private key PEM file
 
 Optional env vars (with defaults):
+  TENNIS_FEED_PROVIDER    — "api_tennis" (default) or "live_tennis"
+  LIVE_TENNIS_API_KEY     — Live Tennis API key (required if provider=live_tennis)
   MIN_EDGE_PCT            — Minimum edge threshold (default: 0.05)
   MIN_CONFIDENCE          — Minimum model confidence (default: 0.60)
   MIN_POINTS_OBSERVED     — Minimum points before trading (default: 10)
@@ -25,8 +27,14 @@ from dotenv import load_dotenv
 
 load_dotenv()  # reads .env from cwd
 
+# --- Tennis data feed selection ---
+# "api_tennis" (default) or "live_tennis" (Live Tennis API, https://livetennisapi.com).
+TENNIS_FEED_PROVIDER: str = os.environ.get("TENNIS_FEED_PROVIDER", "api_tennis").lower()
+
 # --- Required ---
 API_TENNIS_KEY: str = os.environ.get("API_TENNIS_KEY", "")
+# Live Tennis API key, only required when TENNIS_FEED_PROVIDER=live_tennis.
+LIVE_TENNIS_API_KEY: str = os.environ.get("LIVE_TENNIS_API_KEY", "")
 KALSHI_API_KEY: str = os.environ.get("KALSHI_API_KEY", "")
 KALSHI_PRIVATE_KEY_PATH: str = os.environ.get("KALSHI_PRIVATE_KEY_PATH", "")
 

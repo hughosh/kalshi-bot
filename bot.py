@@ -29,6 +29,7 @@ from integration.market_finder import MarketFinder, MarketMatch
 from integration.match_tracker import MatchTracker
 from integration.player_resolver import PlayerResolver
 from integration.risk import RiskManager
+from integration.live_tennis_feed import LiveTennisApiFeed
 from integration.tennis_feed import PointEvent, TennisFeed
 from tennis.engine import PredictionEngine
 from web.app import BroadcastHub, create_app
@@ -60,7 +61,7 @@ class TradingBot:
         self._market_finder: MarketFinder | None = None
         self._match_tracker: MatchTracker | None = None
         self._risk: RiskManager | None = None
-        self._feed: TennisFeed | None = None
+        self._feed: TennisFeed | LiveTennisApiFeed | None = None
         # Web portal components
         self._db_conn = None
         self._bot_state: BotState | None = None
@@ -174,11 +175,19 @@ class TradingBot:
         log.info("Web portal: http://127.0.0.1:%d", config.WEB_PORT)
 
         # ── Tennis feed ────────────────────────────────────────────────
-        self._feed = TennisFeed(
-            api_key=config.API_TENNIS_KEY,
-            on_point=self._on_point,
-            rest_poll_secs=config.REST_POLL_SECS,
-        )
+        if config.TENNIS_FEED_PROVIDER == "live_tennis":
+            log.info("Tennis feed provider: Live Tennis API")
+            self._feed = LiveTennisApiFeed(
+                api_key=config.LIVE_TENNIS_API_KEY,
+                on_point=self._on_point,
+                rest_poll_secs=config.REST_POLL_SECS,
+            )
+        else:
+            self._feed = TennisFeed(
+                api_key=config.API_TENNIS_KEY,
+                on_point=self._on_point,
+                rest_poll_secs=config.REST_POLL_SECS,
+            )
 
         # ── Run ────────────────────────────────────────────────────────
         async with self._kalshi:
@@ -459,7 +468,11 @@ def main():
             log.error("KALSHI_PRIVATE_KEY_PATH (or DEMO_KALSHI_PRIVATE_KEY_PATH) required for live trading")
             sys.exit(1)
 
-    if not config.API_TENNIS_KEY:
+    if config.TENNIS_FEED_PROVIDER == "live_tennis":
+        if not config.LIVE_TENNIS_API_KEY:
+            log.error("LIVE_TENNIS_API_KEY required for TENNIS_FEED_PROVIDER=live_tennis. Free key: https://livetennisapi.com/subscribe/free")
+            sys.exit(1)
+    elif not config.API_TENNIS_KEY:
         log.error("API_TENNIS_KEY required. Set it in your environment.")
         sys.exit(1)
 
